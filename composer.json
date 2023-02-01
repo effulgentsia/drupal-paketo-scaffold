@@ -1,0 +1,27 @@
+{
+  "name": "effulgentsia/drupal-paketo-scaffold",
+  "description": "Adds scaffold files for installing Drupal with the Paketo Buildpack for PHP.",
+  "type": "composer-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "composer-plugin-api": "^2",
+    "drupal/core-composer-scaffold": "^9 || ^10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Effulgetsia\\DrupalPaketoScaffold\\": "src"
+    }
+  },
+  "extra": {
+    "class": "Drupal\\DrupalPaketoScaffold\\Plugin",
+    "branch-alias": {
+      "dev-main": "1.0.x-dev"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "require-dev": {
+    "composer/composer": "^2"
+  }
+}
