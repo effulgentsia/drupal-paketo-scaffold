@@ -13,7 +13,7 @@
     }
   },
   "extra": {
-    "class": "Drupal\\DrupalPaketoScaffold\\Plugin",
+    "class": "Effulgetsia\\DrupalPaketoScaffold\\Plugin",
     "branch-alias": {
       "dev-main": "1.0.x-dev"
     }
