@@ -54,7 +54,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      'post-drupal-scaffold-cmd' => 'scaffold',
+      'post-install-cmd' => ['scaffold', -1],
     ];
   }
 
