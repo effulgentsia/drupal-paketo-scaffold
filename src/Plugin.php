@@ -65,7 +65,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    *   The Composer event.
    */
   public function scaffold(Event $event) {
-    $this->io->write('Paketo scaffold');
     $base_directory = '.';
     $database_directory = './_data/database';
     $files_directory = './_data/files';
@@ -88,23 +87,20 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       file_put_contents($base_directory . '/.drupal/.ht.hash_salt', $hash_salt);
     }
 
-    # The default value for mkdir()'s $permissions parameter. It needs to be
-    # passed explicitly when setting $recurse to true. mkdir() internally also
-    # applies the umask filter, so the directories do not actually receive this
-    # broad permission.
-    $default_mkdir_permission = 0777;
-
     # Database and files directories. These need to be writable by the runtime
     # user, which is different than, but in the same group as, the build time
     # user.
+    $writeable_directory_permissions = 0775;
     if (!file_exists($database_directory)) {
-      mkdir($database_directory, $default_mkdir_permission, true);
-      chmod($database_directory, "g+w");
+      mkdir($database_directory, $writeable_directory_permissions, true);
+      # mkdir() applies the umask filter, so chmod() is needed as well.
+      chmod($database_directory, $writeable_directory_permissions);
     }
     foreach (['public', 'private', 'temp', 'config_sync'] as $type) {
       if (!file_exists($files_directory)) {
-        mkdir($files_directory . '/' . $type, $default_mkdir_permission, true);
-        chmod($files_directory . '/' . $type, "g+w");
+        mkdir($files_directory . '/' . $type, $writeable_directory_permissions, true);
+        # mkdir() applies the umask filter, so chmod() is needed as well.
+        chmod($files_directory . '/' . $type, $writeable_directory_permissions);
       }
     }
 
