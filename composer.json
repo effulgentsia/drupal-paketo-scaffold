@@ -9,11 +9,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Effulgetsia\\DrupalPaketoScaffold\\": "src"
+      "Effulgentsia\\DrupalPaketoScaffold\\": "src"
     }
   },
   "extra": {
-    "class": "Effulgetsia\\DrupalPaketoScaffold\\Plugin",
+    "class": "Effulgentsia\\DrupalPaketoScaffold\\Plugin",
     "branch-alias": {
       "dev-main": "1.0.x-dev"
     }
