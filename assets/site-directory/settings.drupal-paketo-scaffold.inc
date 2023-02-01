@@ -8,11 +8,8 @@ $drupal_paketo_scaffold += [
 ];
 
 $databases['default']['default'] ??= [
-  'database' => $drupal_paketo_scaffold['database_directory'] . '/.ht.sqlite',
-  'prefix' => '',
-  'namespace' => 'Drupal\\sqlite\\Driver\\Database\\sqlite',
   'driver' => 'sqlite',
-  'autoload' => 'core/modules/sqlite/src/Driver/Database/sqlite/',
+  'database' => $drupal_paketo_scaffold['database_directory'] . '/.ht.sqlite',
 ];
 
 $settings['hash_salt'] ??= file_get_contents($drupal_paketo_scaffold['base_directory'] . '/.drupal/.ht.hash_salt');
