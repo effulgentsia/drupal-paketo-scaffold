@@ -65,6 +65,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    *   The Composer event.
    */
   public function scaffold(Event $event) {
+    $this->io->write('Paketo scaffold');
     $base_directory = '.';
     $database_directory = './_data/database';
     $files_directory = './_data/files';
