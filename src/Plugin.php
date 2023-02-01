@@ -54,6 +54,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
+      // Run after drupal/core-composer-scaffold.
+      // @todo Change to use 'post-drupal-scaffold-cmd' event instead.
       'post-install-cmd' => ['scaffold', -1],
     ];
   }
@@ -87,24 +89,24 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       file_put_contents($base_directory . '/.drupal/.ht.hash_salt', $hash_salt);
     }
 
-    # Database and files directories. These need to be writable by the runtime
-    # user, which is different than, but in the same group as, the build time
-    # user.
+    // Database and files directories. These need to be writable by the runtime
+    // user, which is different than, but in the same group as, the build time
+    // user.
     $writeable_directory_permissions = 0775;
     if (!file_exists($database_directory)) {
       mkdir($database_directory, $writeable_directory_permissions, true);
-      # mkdir() applies the umask filter, so chmod() is needed as well.
+      // mkdir() applies the umask filter, so chmod() is needed as well.
       chmod($database_directory, $writeable_directory_permissions);
     }
     foreach (['public', 'private', 'temp', 'config_sync'] as $type) {
       if (!file_exists($files_directory . '/' . $type)) {
         mkdir($files_directory . '/' . $type, $writeable_directory_permissions, true);
-        # mkdir() applies the umask filter, so chmod() is needed as well.
+        // mkdir() applies the umask filter, so chmod() is needed as well.
         chmod($files_directory . '/' . $type, $writeable_directory_permissions);
       }
     }
 
-    # Additions to the site (web/sites/default) directory.
+    // Additions to the site (web/sites/default) directory.
     if (!file_exists($site_directory . '/settings.drupal-paketo-scaffold.inc')) {
       copy(__DIR__ . '/../assets/site-directory/settings.drupal-paketo-scaffold.inc', $site_directory . '/settings.drupal-paketo-scaffold.inc');
     }
