@@ -97,7 +97,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       chmod($database_directory, $writeable_directory_permissions);
     }
     foreach (['public', 'private', 'temp', 'config_sync'] as $type) {
-      if (!file_exists($files_directory)) {
+      if (!file_exists($files_directory . '/' . $type)) {
         mkdir($files_directory . '/' . $type, $writeable_directory_permissions, true);
         # mkdir() applies the umask filter, so chmod() is needed as well.
         chmod($files_directory . '/' . $type, $writeable_directory_permissions);
@@ -109,7 +109,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       copy(__DIR__ . '/../assets/site-directory/settings.drupal-paketo-scaffold.inc', $site_directory . '/settings.drupal-paketo-scaffold.inc');
     }
     if (!file_exists($site_directory . '/settings.php')) {
-      file_put_contents($site_directory . '/settings.php', '<' . '?php require __DIR__ . "/settings.drupal-paketo-scaffold.inc";');
+      file_put_contents($site_directory . '/settings.php', '<' . '?php require __DIR__ . \'/settings.drupal-paketo-scaffold.inc\';');
     }
     if (!file_exists($site_directory . '/files')) {
       symlink(realpath($files_directory . '/public'), $site_directory . '/files');
