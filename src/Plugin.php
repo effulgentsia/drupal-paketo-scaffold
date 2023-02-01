@@ -71,11 +71,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $site_directory = './web/sites/default';
 
     # PHP configuration.
-    if (!file_exists($base_directory . '/.php.d')) {
-      mkdir($base_directory . '/.php.d');
+    if (!file_exists($base_directory . '/.php.ini.d')) {
+      mkdir($base_directory . '/.php.ini.d');
     }
-    if (!file_exists($base_directory . '/.php.d/drupal-paketo-scaffold.ini')) {
-      copy(__DIR__ . '/../assets/base-directory/.php.d/drupal-paketo-scaffold.ini', $base_directory . '/.php.d/drupal-paketo-scaffold.ini');
+    if (!file_exists($base_directory . '/.php.ini.d/drupal-paketo-scaffold.ini')) {
+      copy(__DIR__ . '/../assets/base-directory/.php.ini.d/drupal-paketo-scaffold.ini', $base_directory . '/.php.ini.d/drupal-paketo-scaffold.ini');
     }
 
     # Drupal hash salt.
