@@ -2,9 +2,9 @@
 
 $drupal_paketo_scaffold ??= [];
 $drupal_paketo_scaffold += [
-  'base_directory' => '/layers/workspace/',
-  'database_directory' => '/layers/workspace/_data/database/',
-  'files_directory' => '/layers/workspace/_data/files/',
+  'base_directory' => '/workspace/',
+  'database_directory' => '/workspace/_data/database/',
+  'files_directory' => '/workspace/_data/files/',
 ];
 
 $databases['default']['default'] ??= [
