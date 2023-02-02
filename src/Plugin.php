@@ -93,7 +93,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     $webroot = $extra['drupal-scaffold']['locations']['web-root'] ?? 'web';
     $site_directory = $base_directory . '/' . rtrim($webroot, '/') . '/sites/default';
 
-    # PHP configuration.
+    // PHP configuration.
     if (!file_exists($base_directory . '/.php.ini.d')) {
       mkdir($base_directory . '/.php.ini.d');
     }
@@ -103,10 +103,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       }
     }
 
-    # The Drupal hash salt.
-    # By default, generate a random salt and store it as a literal returned by
-    # .drupal/secrets/hash_salt.php. An app can override this PHP file with
-    # code that connects to some other secrets manager.
+    // The Drupal hash salt.
+    // By default, generate a random salt and store it as a literal returned by
+    // .drupal/secrets/hash_salt.php. An app can override this PHP file with
+    // code that connects to some other secrets manager.
     if (!file_exists($base_directory . '/.drupal')) {
       mkdir($base_directory . '/.drupal');
     }
