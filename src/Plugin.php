@@ -77,9 +77,16 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     // Get the database and files directories. Allow the defaults to be
     // overridden by an optional ./.drupal/storage.php.
     $storage_directories = file_exists($base_directory . '/.drupal/storage.php') ? (require $base_directory . '/.drupal/storage.php') : ['build' => [], 'run' => []];
-    $database_directory = $storage_directories['build']['database_directory'] ?? $base_directory . '/.drupal/storage/database';
-    $files_directory = $storage_directories['build']['files_directory'] ?? $base_directory . '/.drupal/storage/files';
-    $runtime_files_directory = $storage_directories['run']['files_directory'] ?? '/workspace/.drupal/storage/files';
+    $storage_directories['build'] += [
+      'database_directory' => $base_directory . '/.drupal/storage/database',
+      'files_directory' => $base_directory . '/.drupal/storage/files',
+    ];
+    $storage_directories['run'] += [
+      'files_directory' => '/workspace/.drupal/storage/files',
+    ];
+    $database_directory = $storage_directories['build']['database_directory'];
+    $files_directory = $storage_directories['build']['files_directory'];
+    $runtime_files_directory = $storage_directories['run']['files_directory'];
 
     // Get the site directory (e.g., ./web/sites/default).
     $extra = $this->composer->getPackage()->getExtra();
@@ -96,7 +103,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       }
     }
 
-    # Drupal hash salt.
+    # The Drupal hash salt.
+    # By default, generate a random salt and store it as a literal returned by
+    # .drupal/secrets/hash_salt.php. An app can override this PHP file with
+    # code that connects to some other secrets manager.
     if (!file_exists($base_directory . '/.drupal')) {
       mkdir($base_directory . '/.drupal');
     }
@@ -113,30 +123,34 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
 
     // Database and files directories. These need to be writable by the runtime
     // user, which is different than, but in the same group as, the build time
-    // user.
+    // user. An app that does not want these directories scaffolded by this plugin
+    // can return NULL or another falsey value for them in the 'build' key of the
+    // array returned by .drupal/storage.php.
     $writeable_directory_permissions = 0775;
-    if (!file_exists($database_directory)) {
+    if ($database_directory && !file_exists($database_directory)) {
       mkdir($database_directory, $writeable_directory_permissions, true);
       // mkdir() applies the umask filter, so chmod() is needed as well.
       chmod($database_directory, $writeable_directory_permissions);
     }
-    foreach (['public', 'private', 'temp', 'config_sync'] as $type) {
-      if (!file_exists($files_directory . '/' . $type)) {
-        mkdir($files_directory . '/' . $type, $writeable_directory_permissions, true);
-        // mkdir() applies the umask filter, so chmod() is needed as well.
-        chmod($files_directory . '/' . $type, $writeable_directory_permissions);
+    if ($files_directory) {
+      foreach (['public', 'private', 'temp', 'config_sync'] as $type) {
+        if (!file_exists($files_directory . '/' . $type)) {
+          mkdir($files_directory . '/' . $type, $writeable_directory_permissions, true);
+          // mkdir() applies the umask filter, so chmod() is needed as well.
+          chmod($files_directory . '/' . $type, $writeable_directory_permissions);
+        }
       }
     }
 
     // Additions to the site (web/sites/default) directory.
-    if (!file_exists($site_directory . '/settings.drupal-paketo-scaffold.inc')) {
-      copy(__DIR__ . '/../assets/site-directory/settings.drupal-paketo-scaffold.inc', $site_directory . '/settings.drupal-paketo-scaffold.inc');
+    if (!file_exists($site_directory . '/settings.drupal-paketo-scaffold.php')) {
+      copy(__DIR__ . '/../assets/site-directory/settings.drupal-paketo-scaffold.php', $site_directory . '/settings.drupal-paketo-scaffold.php');
     }
     if (!file_exists($site_directory . '/settings.php')) {
-      file_put_contents($site_directory . '/settings.php', '<' . '?php require __DIR__ . \'/settings.drupal-paketo-scaffold.inc\';');
+      file_put_contents($site_directory . '/settings.php', self::PHP_START . require __DIR__ . \'/settings.drupal-paketo-scaffold.php\';');
     }
     if (!file_exists($site_directory . '/files')) {
-      symlink(realpath($files_directory . '/public'), $site_directory . '/files');
+      symlink($runtime_files_directory . '/public', $site_directory . '/files');
     }
   }
 
