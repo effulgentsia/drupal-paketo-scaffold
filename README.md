@@ -28,11 +28,14 @@ pack build my_app_image --builder=paketobuildpacks/builder-jammy-full --env BP_P
 # Run the container.
 docker run --rm -p 8000:8080 my_app_image
 
-# Navigate your browser to http://localhost:8000 and install your Drupal site.
+# Navigate your browser to http://localhost:8000 to install and use your site.
 ```
 
 ## TODO
-Add documentation explaining how this plugin works and how to customize its behavior.
+Add documentation explaining how this plugin works and how to customize its behavior, such as:
+- Implementing persistent storage for the database and file uploads.
+- Using MySQL or PostgreSQL instead of SQLite.
 
-## Warning
-This package is pre-release code and is not well tested. Don't use it for anything serious.
+## Warnings
+- This package is pre-release code and is not well tested. Don't use it for anything serious.
+- The SQLite database and the directories for uploaded files are in the container and are therefore ephemeral, so all Drupal configuration and content gets destroyed when the container terminates.
