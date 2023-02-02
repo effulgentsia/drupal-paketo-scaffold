@@ -24,7 +24,11 @@ $drupal_paketo_scaffold += [
 // Add a default datatabase connection if one isn't already defined.
 $databases['default']['default'] ??= [
   'driver' => 'sqlite',
-  'database' => $drupal_paketo_scaffold['database_directory'] . '/drupal.sqlite',
+  // The name of the SQLite file within the directory doesn't matter, so use
+  // the same name as Drupal's web installer's default. This name provides
+  // extra security for when the file would otherwise be web accessible, but
+  // that's irrelevant when the database directory is outside of the web root.
+  'database' => $drupal_paketo_scaffold['database_directory'] . '/.ht.sqlite',
 ];
 
 // Add defaults for key settings if they're not already defined.
