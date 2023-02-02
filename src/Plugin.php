@@ -15,6 +15,8 @@ use Composer\Script\Event;
  */
 class Plugin implements PluginInterface, EventSubscriberInterface {
 
+  private const PHP_START = '<' . '?php' . "\n";
+
   /**
    * The Composer service.
    *
@@ -67,26 +69,46 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    *   The Composer event.
    */
   public function scaffold(Event $event) {
+    // Within the container, the base directory is /workspace, but
+    // during build time, reference it as '.', so that
+    // `composer install` can also be run on the host computer.
     $base_directory = '.';
-    $database_directory = './_data/database';
-    $files_directory = './_data/files';
-    $site_directory = './web/sites/default';
+
+    // Get the database and files directories. Allow the defaults to be
+    // overridden by an optional ./.drupal/storage.php.
+    $storage_directories = file_exists($base_directory . '/.drupal/storage.php') ? (require $base_directory . '/.drupal/storage.php') : ['build' => [], 'run' => []];
+    $database_directory = $storage_directories['build']['database_directory'] ?? $base_directory . '/.drupal/storage/database';
+    $files_directory = $storage_directories['build']['files_directory'] ?? $base_directory . '/.drupal/storage/files';
+    $runtime_files_directory = $storage_directories['run']['files_directory'] ?? '/workspace/.drupal/storage/files';
+
+    // Get the site directory (e.g., ./web/sites/default).
+    $extra = $this->composer->getPackage()->getExtra();
+    $webroot = $extra['drupal-scaffold']['locations']['web-root'] ?? 'web';
+    $site_directory = $base_directory . '/' . rtrim($webroot, '/') . '/sites/default';
 
     # PHP configuration.
     if (!file_exists($base_directory . '/.php.ini.d')) {
       mkdir($base_directory . '/.php.ini.d');
     }
-    if (!file_exists($base_directory . '/.php.ini.d/drupal-paketo-scaffold.ini')) {
-      copy(__DIR__ . '/../assets/base-directory/.php.ini.d/drupal-paketo-scaffold.ini', $base_directory . '/.php.ini.d/drupal-paketo-scaffold.ini');
+    foreach (['drupal-paketo-scaffold.ini', 'drupal-paketo-scaffold-database.ini'] as $file) { 
+      if (!file_exists($base_directory . '/.php.ini.d/' . $file)) {
+        copy(__DIR__ . '/../assets/base-directory/.php.ini.d/' . $file, $base_directory . '/.php.ini.d/' . $file);
+      }
     }
 
     # Drupal hash salt.
     if (!file_exists($base_directory . '/.drupal')) {
       mkdir($base_directory . '/.drupal');
     }
-    if (!file_exists($base_directory . '/.drupal/.ht.hash_salt')) {
+    if (!file_exists($base_directory . '/.drupal/secrets')) {
+      mkdir($base_directory . '/.drupal/secrets');
+      chmod($base_directory . '/.drupal/secrets', 0750);
+    }
+    if (!file_exists($base_directory . '/.drupal/secrets/hash_salt.php')) {
+      // Generate a hash salt the same way as Drupal's web installer does,
+      // except it doesn't need to be made URL-safe.
       $hash_salt = base64_encode(random_bytes(55));
-      file_put_contents($base_directory . '/.drupal/.ht.hash_salt', $hash_salt);
+      file_put_contents($base_directory . '/.drupal/secrets/hash_salt.php', self::PHP_START . "return '" . $hash_salt . "';");
     }
 
     // Database and files directories. These need to be writable by the runtime
