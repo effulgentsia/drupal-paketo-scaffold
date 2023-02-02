@@ -118,7 +118,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       // Generate a hash salt the same way as Drupal's web installer does,
       // except it doesn't need to be made URL-safe.
       $hash_salt = base64_encode(random_bytes(55));
-      file_put_contents($base_directory . '/.drupal/secrets/hash_salt.php', self::PHP_START . "return '" . $hash_salt . "';");
+      file_put_contents($base_directory . '/.drupal/secrets/hash_salt.php', self::PHP_START . 'return \'' . $hash_salt . '\';');
     }
 
     // Database and files directories. These need to be writable by the runtime
@@ -147,7 +147,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
       copy(__DIR__ . '/../assets/site-directory/settings.drupal-paketo-scaffold.php', $site_directory . '/settings.drupal-paketo-scaffold.php');
     }
     if (!file_exists($site_directory . '/settings.php')) {
-      file_put_contents($site_directory . '/settings.php', self::PHP_START . require __DIR__ . \'/settings.drupal-paketo-scaffold.php\';');
+      file_put_contents($site_directory . '/settings.php', self::PHP_START . 'require __DIR__ . \'/settings.drupal-paketo-scaffold.php\';');
     }
     if (!file_exists($site_directory . '/files')) {
       symlink($runtime_files_directory . '/public', $site_directory . '/files');
