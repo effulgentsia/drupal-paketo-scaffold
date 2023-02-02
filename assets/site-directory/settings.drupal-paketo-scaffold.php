@@ -24,7 +24,7 @@ $drupal_paketo_scaffold += [
 // Add a default datatabase connection if one isn't already defined.
 $databases['default']['default'] ??= [
   'driver' => 'sqlite',
-  'database' => $drupal_paketo_scaffold['database_directory'] . '/.ht.sqlite',
+  'database' => $drupal_paketo_scaffold['database_directory'] . '/drupal.sqlite',
 ];
 
 // Add defaults for key settings if they're not already defined.
