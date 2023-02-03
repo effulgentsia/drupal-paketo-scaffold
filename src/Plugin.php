@@ -152,10 +152,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
     if (!file_exists($site_directory . '/settings.php')) {
       // Generate a settings.php file that first loads the scaffold's settings
       // and then loads the app's settings if present.
-      file_put_contents($site_directory . '/settings.php', self::PHP_START . [
+      file_put_contents($site_directory . '/settings.php', self::PHP_START . implode("\n", [
         "require __DIR__ . '/settings.drupal-paketo-scaffold.php';",
         "@include '/workspace/.drupal/settings.php';",
-      ].join("\n"));
+      ]));
     }
     if (!file_exists($site_directory . '/files')) {
       symlink($runtime_files_directory . '/public', $site_directory . '/files');
