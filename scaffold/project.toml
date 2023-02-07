@@ -82,7 +82,7 @@ chmod g+w ${BPE_DEFAULT_DRUPAL_FILES_DIR}/{public,private,temp,config_sync}
 # Public files need to be web accessible, so create a symbolic link from
 # Drupal's default public files directory (web/sites/default/files) to
 # the real public files directory created above.
-ln -s ${CNB_APP_DIR}/${BPE_DEFAULT_DRUPAL_FILES_DIR}/public ${BP_PHP_WEB_DIR}/sites/default/files
+ln -s /workspace/${BPE_DEFAULT_DRUPAL_FILES_DIR}/public ${BP_PHP_WEB_DIR}/sites/default/files
 """
 
 ###############################################################
