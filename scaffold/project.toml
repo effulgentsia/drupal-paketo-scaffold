@@ -1,0 +1,95 @@
+###############################################################
+# The syntax for this file is described in
+# https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md#https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md
+#
+# Environment variables added in this file are for the
+# container that runs the builder, not the container that runs
+# the built image.
+#
+# When using a Paketo buildpack, environment variables that
+# begin with BPE_DEFAULT_ are also added as default environment
+# variables in the built image, without that prefix. For
+# example, ${BPE_DEFAULT_PORT} in the builder becomes the
+# default value of ${PORT} in the built image.
+###############################################################
+
+[_]
+schema-version = "0.2"
+
+[io.buildpacks]
+builder = "paketobuildpacks/builder-jammy-full"
+
+###############################################################
+# The PHP buildpack and environment variables for it.
+###############################################################
+
+[[io.buildpacks.group]]
+uri = "paketo-buildpacks/php"
+
+[[io.buildpacks.build.env]] 
+name = "BP_COMPOSER_INSTALL_OPTIONS"
+value = "--ignore-platform-req=ext-gd --ignore-platform-req=ext-pdo"
+
+[[io.buildpacks.build.env]]
+name = "BP_PHP_SERVER"
+value = "httpd"
+
+[[io.buildpacks.build.env]]
+name = "BP_PHP_WEB_DIR"
+value = "web"
+
+[[io.buildpacks.build.env]]
+name = "BPE_DEFAULT_PORT"
+value = "8080"
+
+###############################################################
+# Create runtime-writable directories for Drupal's database and
+# files.
+#
+# The database directory defined below is only used by databases
+# that run in the same container as Drupal (e.g., SQLite).
+# Where managed databases (e.g., PlanetScale or CockroachDB) or
+# databases served by separate containers (e.g., MySQL or
+# PostgreSQL) store their data is up to them.
+###############################################################
+
+[[io.buildpacks.build.env]]
+name = "BPE_DEFAULT_DRUPAL_DB_DIR"
+value = ".volume/drupal/database"
+
+[[io.buildpacks.build.env]]
+name = "BPE_DEFAULT_DRUPAL_FILES_DIR"
+value = ".volume/drupal/files"
+
+[[io.buildpacks.group]]
+id = "app/drupal"
+
+  [io.buildpacks.group.script]
+  # The buildpack API version that this script is compatible with.
+  # This is a simple script that should be compatible with all API
+  # versions, but setting this to 0.5 because that's what's in
+  # https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md#https://github.com/buildpacks/spec/blob/main/extensions/project-descriptor.md#example
+  api = "0.5"
+
+  shell = "/bin/bash"
+  inline = """
+mkdir -p ${BPE_DEFAULT_DRUPAL_DB_DIR}
+chmod g+w ${BPE_DEFAULT_DRUPAL_DB_DIR}
+
+mkdir -p ${BPE_DEFAULT_DRUPAL_FILES_DIR}/{public,private,temp,config_sync}
+chmod g+w ${BPE_DEFAULT_DRUPAL_FILES_DIR}/{public,private,temp,config_sync}
+
+# Public files need to be web accessible, so create a symbolic link from
+# Drupal's default public files directory (web/sites/default/files) to
+# the real public files directory created above.
+ln -s ${CNB_APP_DIR}/${BPE_DEFAULT_DRUPAL_FILES_DIR}/public ${BP_PHP_WEB_DIR}/sites/default/files
+"""
+
+###############################################################
+# Allow app to have custom Drupal settings without modifying
+# web/sites/default/settings.php.
+###############################################################
+
+[[io.buildpacks.build.env]]
+name = "BPE_DEFAULT_DRUPAL_ADDITIONAL_SETTINGS_FILE"
+value = ".drupal/app.settings.php"
