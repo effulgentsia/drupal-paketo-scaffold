@@ -8,7 +8,7 @@ services:
     environment:
       DRUPAL_HASH_SALT_FILE: /run/secrets/drupal-hash-salt
     volumes:
-      - volume:/workspace/.drupal/volume
+      - volume:/workspace/.volume
 
 secrets:
   drupal-hash-salt: 
