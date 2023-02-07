@@ -42,7 +42,7 @@
           'host' => $getSecret('DRUPAL_DB_HOST'),
           'username' => $getSecret('DRUPAL_DB_USER'),
           'password' => $getSecret('DRUPAL_DB_PASSWORD'),
-          'database' => $getSecret('DRUPAL_DB_NAME']),
+          'database' => $getSecret('DRUPAL_DB_NAME'),
         ];
         break;
     }
