@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  db:
+    image: mariadb
+    volumes:
+      - database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db-root-password
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD_FILE: /run/secrets/drupal-db-password
+    secrets:
+      - db-root-password
+      - drupal-db-password
+
+  app:
+    image: my-app
+    ports:
+      - 8000:8080
+    environment:
+      DRUPAL_HASH_SALT_FILE: /run/secrets/drupal-hash-salt
+      DRUPAL_DB_DRIVER: mysql
+      DRUPAL_DB_HOST: db
+      DRUPAL_DB_USER: drupal
+      DRUPAL_DB_PASSWORD_FILE: /run/secrets/drupal-db-password
+      DRUPAL_DB_NAME: drupal
+    volumes:
+      - files:/workspace/.volume/drupal/files
+
+secrets:
+  drupal-hash-salt:
+    name: drupal-hash-salt
+    external: true
+  db-root-password:
+    name: db-root-password
+    external: true  
+  drupal-db-password:
+    name: drupal-db-password
+    external: true
+
+volumes:
+  database:
+  files:
