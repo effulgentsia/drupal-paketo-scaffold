@@ -1,5 +1,7 @@
 # Drupal Paketo Scaffold
-This Composer plugin implements scaffolding for building a Drupal application container image with the [Paketo Buildpacks](https://paketo.io/). There are [several benefits to building container images with buildpacks](https://tanzu.vmware.com/developer/blog/understanding-the-differences-between-dockerfile-and-cloud-native-buildpacks/), including how they simplify the work of combining multiple infrastructure services (such as Apache HTTPD and PHP-FPM) into the same container image, for cases where that's preferred over separating the containers and connecting them with Docker Compose.
+This package provides scaffold files for building a Drupal application container image with the [Paketo Buildpacks](https://paketo.io/). The scaffold files are installed in the needed locations during a `composer install` operation by the [Drupal Composer Scaffold](https://github.com/drupal/core-composer-scaffold) Composer plugin that is included by default within [drupal/recommended-project](https://github.com/drupal/recommended-project).
+
+There are [several benefits to building container images with buildpacks](https://tanzu.vmware.com/developer/blog/understanding-the-differences-between-dockerfile-and-cloud-native-buildpacks/), including how they simplify the work of combining multiple infrastructure services (such as Apache HTTPD and PHP-FPM) into the same container image, for cases where that's preferred over separating the containers and connecting them with Docker Compose.
 
 ## Usage
 Assuming you already have [Pack](https://buildpacks.io/docs/tools/pack/) installed and [Docker](https://www.docker.com/) running, the following is all that's needed to build a Drupal container image:
