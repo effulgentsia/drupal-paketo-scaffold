@@ -6,7 +6,7 @@
  * side effect we want to have on the file that includes this one is to
  * add to $databases and $settings.
  */
-(function () use ($databases, $settings) {
+(function () use (&$databases, &$settings) {
 
   $app_root = $_SERVER['CNB_APP_DIR'] ?? '/workspace';
 
