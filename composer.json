@@ -12,9 +12,9 @@
     "drupal-scaffold": {
       "file-mapping": {
         "project.toml": {"overwrite": false, "path": "scaffold/project.toml"},
-        ".php.ini.d/drupal-paketo-scaffold.ini": "scaffold/.php.ini.d/drupal-paketo-scaffold.ini",
-        ".drupal/drupal-paketo-scaffold.settings.php": "scaffold/.drupal/drupal-paketo-scaffold.settings.php",
-        "[web-root]/sites/default/settings.php": {"overwrite": false, "path": "scaffold/web/sites/default/settings.php"}
+        ".php.ini.d/drupal-paketo-scaffold.php.ini": "scaffold/drupal-paketo-scaffold.php.ini",
+        ".drupal/drupal-paketo-scaffold.settings.php": "scaffold/drupal-paketo-scaffold.settings.php",
+        "[web-root]/sites/default/settings.php": {"overwrite": false, "path": "scaffold/settings.php"}
       }
     }
   }
