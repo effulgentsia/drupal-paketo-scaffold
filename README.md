@@ -49,13 +49,13 @@ pack build my-app --clear-cache
 docker run --rm -p 8000:8080 --env DRUPAL_HASH_SALT=$(openssl rand -base64 48) my-app
 ```
 
-Now you can navigate your browser to http://localhost:8000 to install and use your site.
+Now you can navigate your browser to http://localhost:8000 to install your desired Drupal profile and use your site.
 
-## TODO
-Add documentation explaining how this plugin works and how to customize its behavior, such as:
-- Implementing persistent storage for the database and file uploads.
-- Using MySQL or PostgreSQL instead of SQLite.
+## Retaining data across container restarts
+With the above example, the Drupal SQLite database and the directories for uploaded files (including public, private, temp, and config_sync) are in the container and are therefore ephemeral, so all Drupal configuration and content gets destroyed when the container terminates. You can [attach a volume to the /workspace/.volume directory](examples/2-attach-volume) in order to make that data persistent across container restarts.
+
+## Using a different database than SQLite
+If you prefer, you can [use MySQL](examples/3-mysql) or another database instead of SQLite.
 
 ## Warnings
-- This package is pre-release code and is not well tested. Don't use it for anything serious.
-- The SQLite database and the directories for uploaded files are in the container and are therefore ephemeral, so all Drupal configuration and content gets destroyed when the container terminates.
+- This package is pre-release code and is not well tested. Don't use it for anything important.
